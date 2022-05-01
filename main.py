@@ -106,7 +106,7 @@ def decisions(bal, d, hand, dealer):
     global PLAYING
     next_card = hits(d)
     # Gives the player the options between hitting, standing, or doubling down
-    choice = str(input(f"Your Choices: \n[H]IT | [S]TAND | [D]OUBLE DOWN - ")).lower()
+    choice = str(input(f"Your Choices: \n[H]IT | [S]TAND | [D]OUBLE DOWN | [SU]RRENDER - ")).lower()
     print("\n")
     if choice == "h":
         hand.add_cards(next_card)
@@ -124,6 +124,10 @@ def decisions(bal, d, hand, dealer):
             PLAYING = False
         else:
             print("Unable to Double Down -- ERROR: Insufficient Balance\n")
+    elif choice == "su":
+        bal.bet = bal.bet // 2
+        PLAYING = False
+        hand.value += 21
     else:
         print("Invalid Choice")
 
