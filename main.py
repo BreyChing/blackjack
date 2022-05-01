@@ -89,23 +89,23 @@ class Money:
     def loss(self):
         self.total -= self.bet
 
-
-def take_bet(bet_amount, player_money):
-    while bet_amount > player_money or bet_amount <= 49:
-        print("\n INVALID BET AMOUNT!")
-        bet_amount = int(input(" Enter bet again: (There is a minimum bet requirement of 50) "))
-    return bet_amount
+    def take_bet(self, bet_amount):
+        while bet_amount > self.total or bet_amount <= 49:
+            print("\n INVALID BET AMOUNT!")
+            bet_amount = int(input(" Enter bet again: (There is a minimum bet requirement of 50) "))
+        self.bet = bet_amount
 
 
 def hits(obj_de):
+    # Gives a new card to the player
     new_card = [obj_de.deal_cards()[0][0]]
-    # obj_h.add_cards(new_card)
     return new_card
 
 
 def decisions(bal, d, hand, dealer):
     global PLAYING
     next_card = hits(d)
+    # Gives the player the options between hitting, standing, or doubling down
     choice = str(input(f"Your Choices: \n[H]IT | [S]TAND | [D]OUBLE DOWN - ")).lower()
     print("\n")
     if choice == "h":
@@ -129,6 +129,7 @@ def decisions(bal, d, hand, dealer):
 
 
 def show_some(player_cards, dealer_cards, obj_h):
+    # Reveals the players cards compared to one of the dealer's card
     print(f" -----\n Your Cards [{obj_h.value}] : {player_cards}")
     print(
         f" Dealer's Cards [{values[dealer_cards[1][1]]}] : {[dealer_cards[1]]} \n -----\n"
@@ -136,6 +137,7 @@ def show_some(player_cards, dealer_cards, obj_h):
 
 
 def show_all(player_cards, dealer_cards, obj_h, obj_d):
+    # Reveals all the cards in both hands
     print(f" ------\n Your Cards [{obj_h.value}] : {player_cards}")
     print(f" Dealer's Cards [{obj_d.value}] : {dealer_cards} \n ------\n")
 
@@ -147,6 +149,7 @@ def player_bust(obj_h, obj_c):
     return False
 
 
+# Win conditions for both the player and the dealer for each situation
 def player_wins(obj_h, obj_d, obj_c):
     if any((obj_h.value == 21, obj_h.value > obj_d.value and obj_h.value < 21)):
         obj_c.win()
@@ -182,22 +185,25 @@ def intro_screen():
 
 
 def game():
+    # A game function to manage all the objects as well as the game rules
     intro_screen()
     balance = Money()
     while True:
+        # Creates the deck and shuffles it
         deck = Deck()
         deck.shuffle()
+        # Deal cards to the player and the dealer
         p_cards, d_cards = deck.deal_cards()
         hand = Hand()
         hand.add_cards(p_cards)
         print("\n Current Balance:", balance.total)
         bets = int(input(" Enter Bet amount : "))
-        balance.bet = take_bet(bets, balance.total)
+        balance.take_bet(bets)
         print("\n")
-
         show_some(p_cards, d_cards, hand)
         global PLAYING
-        while PLAYING:  # Recall var. from hit and stand function
+        while PLAYING:
+            # Gives the player decisions to make based on their current hand
             decisions(balance, deck, hand, d_cards)
             if player_bust(hand, balance):
                 print("\n You have gone over 21! Bust!")
